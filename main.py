@@ -5,155 +5,128 @@ import pygame_menu
 from copy import deepcopy
 from random import choice, randrange
 
+
 pygame.init()
 
+timer = pygame.time.Clock()
 bg_image = pygame.image.load("logo.jpg")
-FRAME_COLOR = (146, 110, 174)
-BLUE = (204, 255, 255)
-BOUNCE = (255, 255, 255)
-RED = (244, 0, 0)
-SNAKE_COLOR = (0, 0, 0)
-HEADER_COLOR = (146, 110, 174)
+BACKGROUND_COLOR = (255, 229, 180)
+GREEN = (154, 205, 50)
+TEXT_COLOR = (0, 0, 0)
+OBJECTS_COLOR = (0, 39, 9)
+COUNT = 20
+SIZE = 20
 
-COUNT_BLOCK = 20
-SIZE_BLOCK = 20
-
-MARGiN = 1
-HEADER_MARGIN = 100
+MARGiN = 0
 size = [998, 977]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Змейка')
-timer = pygame.time.Clock()
-courier = pygame.font.SysFont('courier', 36)
+courier = pygame.font.SysFont('None', 72)
 
-class SnakeBlock:
+class Body_Of_Snake:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def insider(self):
-        return 0 <= self.x < SIZE_BLOCK and 0 <= self.y < SIZE_BLOCK
-
     def __eq__(self, other):
-        return isinstance(other, SnakeBlock) and self.x == other.x and self.y == other.y
+        return isinstance(other, Body_Of_Snake) and self.x == other.x and self.y == other.y
+
+    def insider(self):
+        return 0 <= self.x < SIZE and 0 <= self.y < SIZE
 
 
-def draw_block(color, row, colums):
+def draw_body_part(color, row, colums):
     pygame.draw.rect(screen, color,
-                     [10 + colums * SIZE_BLOCK + MARGiN * (colums + 1),
-                      20 + row * SIZE_BLOCK + MARGiN * (row + 1), SIZE_BLOCK, SIZE_BLOCK])
+                     [10 + colums * SIZE + MARGiN * (colums + 1),
+                      20 + row * SIZE + MARGiN * (row + 1), SIZE, SIZE])
 def start_the_game():
-    def draw_empty_block():
-        x = random.randint(0, COUNT_BLOCK - 1)
-        y = random.randint(0, COUNT_BLOCK - 1)
-        empty_block = SnakeBlock(x, y)
-        while empty_block in snake_block:
-            empty_block.x = random.randint(0, COUNT_BLOCK - 1)
-            empty_block.y = random.randint(0, COUNT_BLOCK - 1)
-        return empty_block
+    def draw_apple():
+        x = random.randint(0, COUNT - 1)
+        y = random.randint(0, COUNT - 1)
+        draw_apple = Body_Of_Snake(x, y)
+        while draw_apple in snakes_body:
+            draw_apple.x = random.randint(0, COUNT - 1)
+            draw_apple.y = random.randint(0, COUNT - 1)
+        return draw_apple
 
 
-    snake_block = [SnakeBlock(9, 8), SnakeBlock(9, 9), SnakeBlock(9, 10)]
-    apple = draw_empty_block()
-    d_row = buf_row = 0
-    d_col = buf_col = 1
-    total = 0
+    snakes_body = [Body_Of_Snake(5, 5), Body_Of_Snake(5, 6), Body_Of_Snake(5, 7)]
+    y = player_y = 0
+    x = player_x = 1
     speed = 1
+    total = 0
+    apple = draw_apple()
 
     while True:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                print('exit')
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP and d_col != 0:
-                    buf_row = -1
-                    buf_col = 0
-                elif event.key == pygame.K_DOWN and d_col != 0:
-                    buf_row = 1
-                    buf_col = 0
-                elif event.key == pygame.K_LEFT and d_row != 0:
-                    buf_row = 0
-                    buf_col = -1
-                elif event.key == pygame.K_RIGHT and d_row != 0:
-                    buf_row = 0
-                    buf_col = 1
+                if event.key == pygame.K_UP and x != 0:
+                    player_y = -1
+                    player_x = 0
+                elif event.key == pygame.K_DOWN and x != 0:
+                    player_y = 1
+                    player_x = 0
+                elif event.key == pygame.K_LEFT and y != 0:
+                    player_y = 0
+                    player_x = -1
+                elif event.key == pygame.K_RIGHT and y != 0:
+                    player_y = 0
+                    player_x = 1
 
-        screen.fill(FRAME_COLOR)
+        screen.fill(BACKGROUND_COLOR)
+        text_total = courier.render(f"Level(Speed): {speed}", 0, TEXT_COLOR)
 
-        pygame.draw.rect(screen, HEADER_COLOR, [0, 0, size[0], HEADER_MARGIN])
-        text_total = courier.render(f"Total: {total}", 0, BOUNCE)
+        screen.blit(text_total, (SIZE, SIZE + 500))
 
-        screen.blit(text_total, (SIZE_BLOCK, SIZE_BLOCK + 500))
+        text_speed = courier.render(f"Total: {total}", 0, TEXT_COLOR)
 
-        text_speed = courier.render(f"Level(Speed): {speed}", 0, BOUNCE)
+        screen.blit(text_speed, (SIZE + 500, SIZE + 500))
+        for row in range(COUNT):
+            for colums in range(COUNT):
+                color = GREEN
+                draw_body_part(color, row, colums)
 
-        screen.blit(text_speed, (SIZE_BLOCK + 300, SIZE_BLOCK + 500))
-
-        for row in range(COUNT_BLOCK):
-            for colums in range(COUNT_BLOCK):
-                if (row + colums % 2) == 0:
-                    color = BLUE
-                else:
-                    color = BLUE
-                draw_block(color, row, colums)
-
-        head = snake_block[-1]
+        head = snakes_body[-1]
         if not head.insider():
-            print('ti moi crash')
             break
 
-        draw_block(RED, apple.x, apple.y)
-        for block in snake_block:
-            draw_block(SNAKE_COLOR, block.x, block.y)
+        draw_body_part(OBJECTS_COLOR, apple.x, apple.y)
+        for body_part in snakes_body:
+            draw_body_part(OBJECTS_COLOR, body_part.x, body_part.y)
 
         if apple == head:
             total += 1
-            speed = total // 5 + 1
-            snake_block.append(apple)
-            apple = draw_empty_block()
+            speed = total // 2 + 1
+            snakes_body.append(apple)
+            apple = draw_apple()
 
-        d_row = buf_row
+        y = player_y
+        x = player_x
 
-        d_col = buf_col
+        new_head = Body_Of_Snake(head.x + y, head.y + x)
 
-        new_head = SnakeBlock(head.x + d_row, head.y + d_col)
-
-        if new_head in snake_block:
-            print('crash yourself')
+        if new_head in snakes_body:
             break
 
-        snake_block.append(new_head)
+        snakes_body.append(new_head)
 
-        snake_block.pop(0)
+        snakes_body.pop(0)
 
         pygame.display.flip()
-        timer.tick(3 + speed)
+        timer.tick(5 + speed)
 
 main_theme = pygame_menu.themes.THEME_DARK.copy()
 main_theme.set_background_color_opacity(0.4)
 menu = pygame_menu.Menu(' ', 500, 300,
                        theme=main_theme)
 
-menu.add.text_input('Имя лоха :', default='Waltuh White')
-menu.add.button('Играть', start_the_game)
-menu.add.button('Выйти', pygame_menu.events.EXIT)
-
-def exit_screen():
-    screen.fill(pygame.Color('black'))
-    text_rect = fnt2.render('GAME OVER', True, pygame.Color('darkorange')).get_rect(center=(750 / 2, 940 / 2))
-    screen.blit(fnt2.render('GAME OVER', True, pygame.Color('darkorange')), text_rect)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                return
-        pygame.display.flip()
-        clock.tick(60)
+menu.add.text_input('Name: ', default='Никита Сергеевич')
+menu.add.button('Play', start_the_game)
+menu.add.button('Exit', pygame_menu.events.EXIT)
 
 while True:
 
