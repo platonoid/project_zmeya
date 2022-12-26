@@ -7,10 +7,10 @@ from random import choice, randrange
 
 
 pygame.init()
-pygame.mixer.music.load('sounds/brawl stars — candyland season theme (www.lightaudio.ru).mp3')
+pygame.mixer.music.load('brawl stars — candyland season theme (www.lightaudio.ru).mp3')
 pygame.mixer.music.play(-1)
-e = pygame.mixer.Sound('sounds/Звук ICQ_ ошибка.wav')
-d = pygame.mixer.Sound('sounds/legkiy-gluhoy-hrust-vetki.wav')
+e = pygame.mixer.Sound('Звук ICQ_ ошибка.wav')
+d = pygame.mixer.Sound('legkiy-gluhoy-hrust-vetki.wav')
 
 timer = pygame.time.Clock()
 bg_image = pygame.image.load("logo.jpg")
@@ -25,7 +25,7 @@ MARGiN = 1
 size = [998, 977]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Змейка')
-courier = pygame.font.SysFont('None', 72)
+score_font = pygame.font.SysFont("comicsansms", 72)
 
 class Body_Of_Snake:
     def __init__(self, x, y):
@@ -78,10 +78,10 @@ def start_the_game():
                     player_x, player_y = 1, 0
 
         screen.fill(BACKGROUND_COLOR)
-        text_total = courier.render(f"Level(Speed): {speed}", 0, TEXT_COLOR)
+        text_total = score_font.render(f"Level(Speed): {speed}", 0, TEXT_COLOR)
         screen.blit(text_total, (SIZE, SIZE + 500))
-        text_speed = courier.render(f"Total: {total}", 0, TEXT_COLOR)
-        screen.blit(text_speed, (SIZE + 500, SIZE + 500))
+        text_speed = score_font.render(f"Total: {total}", 0, TEXT_COLOR)
+        screen.blit(text_speed, (SIZE + 700, SIZE + 500))
         for row in range(COUNT):
             for colums in range(COUNT):
                 color = GREEN
