@@ -15,7 +15,6 @@ d = pygame.mixer.Sound('legkiy-gluhoy-hrust-vetki.wav')
 
 timer = pygame.time.Clock()
 bg_image = pygame.image.load("logo.jpg")
-final_image = pygame.image.load("final.jpg")
 BACKGROUND_COLOR = (255, 229, 180)
 GREEN = (154, 205, 50)
 TEXT_COLOR = (0, 0, 0)
@@ -207,10 +206,6 @@ def draw_apple():
         draw_apple.x = random.randint(0, COUNT - 1)
         draw_apple.y = random.randint(0, COUNT - 1)
     return draw_apple
-
-def message(msg,color):
-    mesg = score_font.render(msg, True, color)
-    screen.blit(mesg, [450, 320])
 
 
 snakes_body = [Body_Of_Snake(5, 5), Body_Of_Snake(5, 6), Body_Of_Snake(5, 7)]
