@@ -2,6 +2,7 @@ import random
 import pygame
 import sys
 import time
+import sqlite3
 import pygame_menu
 from copy import deepcopy
 from random import choice, randrange
@@ -41,6 +42,16 @@ size = [998, 977]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Змейка')
 score_font = pygame.font.SysFont("comicsansms", 72)
+
+con = sqlite3.connect('Snake_records.db')
+cur = con.cursor()
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS records(
+id INT PRIMARY KEY,
+points TEXT);
+""")
+con.commit()
 
 
 def play_bg_music(state):
@@ -161,6 +172,8 @@ class Body_Of_Snake:
         return 0 <= self.x < SIZE and 0 <= self.y < SIZE
 
 c = 0
+
+
 def draw_body_part(color, row, colums, eto='pofig'):
     global c
     if color != 'russia':
@@ -216,6 +229,9 @@ total = 0
 apple = draw_apple()
 
 def game_over():
+    cur.execute(f'''INSERT INTO records(points) VALUES({str(total)})''')
+    con.commit()
+
     my_font = pygame.font.SysFont('times new roman', 50)
 
     game_over_surface = my_font.render(
@@ -254,6 +270,16 @@ while running:
     screen.blit(text_total, (SIZE, SIZE + 500))
     text_speed = score_font.render(f"Total: {total}", 0, TEXT_COLOR)
     screen.blit(text_speed, (SIZE + 600, SIZE + 500))
+
+    string_rendered = score_font.render('Рекорды:', 0, pygame.Color('black'))
+    intro_rect = string_rendered.get_rect()
+    screen.blit(string_rendered, (500, 20))
+
+    a = cur.execute('''SELECT points FROM records ORDER BY points DESC''').fetchmany(5)
+    for i in range(len(a)):
+        string_rendered = score_font.render(f'{i + 1}. {a[i][0]}', 0, pygame.Color('black'))
+        screen.blit(string_rendered, (650, 100 + i * 75))
+
     for row in range(COUNT):
         for colums in range(COUNT):
             if color != 'russia':
@@ -294,3 +320,4 @@ while running:
     snakes_body.pop(0)
     pygame.display.flip()
     timer.tick(5 + speed)
+
