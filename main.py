@@ -1,6 +1,7 @@
 import random
 import pygame
 import sys
+import time
 import pygame_menu
 from copy import deepcopy
 from random import choice, randrange
@@ -36,6 +37,7 @@ backcolor = 'green'
 applecolor = 'black'
 
 MARGiN = 1
+running = True
 size = [998, 977]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption('Змейка')
@@ -123,7 +125,7 @@ def start_screen():
                      500 + row * 75 + MARGiN * (row + 1), 500 + row * 75 + MARGiN * (row + 1) + 75])
                 color = 'black'
 
-    while True:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
@@ -144,27 +146,6 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 
-
-def exit_screen():
-    fon = pygame.transform.scale(final_image, (size))
-    play_bg_music(False)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                exit()
-            elif event.type == pygame.KEYDOWN or \
-                    event.type == pygame.MOUSEBUTTONDOWN:
-                play_bg_music(True)
-                return
-        pygame.display.flip()
-        clock.tick(FPS)
-
-    while True:
-        for event in events:
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_w:
-                return start_screen()
-        pygame.display.flip()
-        clock.tick(FPS)
 
 start_screen()
 
@@ -227,6 +208,10 @@ def draw_apple():
         draw_apple.y = random.randint(0, COUNT - 1)
     return draw_apple
 
+def message(msg,color):
+    mesg = score_font.render(msg, True, color)
+    screen.blit(mesg, [450, 320])
+
 
 snakes_body = [Body_Of_Snake(5, 5), Body_Of_Snake(5, 6), Body_Of_Snake(5, 7)]
 x = player_x = 0
@@ -235,7 +220,26 @@ speed = 1
 total = 0
 apple = draw_apple()
 
-while True:
+def game_over():
+    my_font = pygame.font.SysFont('times new roman', 50)
+
+    game_over_surface = my_font.render(
+        'Your Total is : ' + str(total), True, applecolor)
+
+    game_over_rect = game_over_surface.get_rect()
+
+    game_over_rect.midtop = (450, 450)
+
+    screen.blit(game_over_surface, game_over_rect)
+    pygame.display.flip()
+
+    time.sleep(2)
+
+    pygame.quit()
+
+    quit()
+
+while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -268,7 +272,7 @@ while True:
     head = snakes_body[-1]
     if not head.insider():
         d.play()
-        break
+        game_over()
 
     draw_body_part(applecolor, apple.y, apple.x, eto='app') # цвет яблока
     for body_part in snakes_body:
@@ -289,11 +293,9 @@ while True:
 
     if new_head in snakes_body:
         d.play()
-        break
+        game_over()
 
     snakes_body.append(new_head)
-
     snakes_body.pop(0)
     pygame.display.flip()
     timer.tick(5 + speed)
-
