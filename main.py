@@ -147,8 +147,6 @@ def start_screen():
 
 def exit_screen():
     fon = pygame.transform.scale(final_image, (size))
-    text_rect = final_image.get_rect(center=(375, 520))
-    fon.blit(final_image, text_rect)
     play_bg_music(False)
     while True:
         for event in pygame.event.get():
