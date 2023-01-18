@@ -4,7 +4,6 @@ import sys
 import time
 import image
 import sqlite3
-import pygame_menu
 from copy import deepcopy
 from random import choice, randrange
 
@@ -156,7 +155,6 @@ def start_screen():
                     [600 + colums * 75 + MARGiN * (colums + 1), 600 + colums * 75 + MARGiN * (colums + 1) + 75,
                      500 + row * 75 + MARGiN * (row + 1), 500 + row * 75 + MARGiN * (row + 1) + 75])
                 color = 'black'
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -174,14 +172,9 @@ def start_screen():
                             applecolor = applecolors[po]
                         else:
                             color = 'russia'
-
         pygame.display.flip()
         clock.tick(FPS)
-
-
 start_screen()
-
-
 class Body_Of_Snake:
     def __init__(self, x, y):
         self.x = x
@@ -194,7 +187,6 @@ class Body_Of_Snake:
         return 0 <= self.x < SIZE and 0 <= self.y < SIZE
 
 c = 0
-
 
 def draw_body_part(color, row, colums, eto='pofig'):
     global c
@@ -242,7 +234,6 @@ def draw_apple():
         draw_apple.y = random.randint(0, COUNT - 1)
     return draw_apple
 
-
 snakes_body = [Body_Of_Snake(5, 5), Body_Of_Snake(5, 6), Body_Of_Snake(5, 7)]
 x = player_x = 0
 y = player_y = 1
@@ -263,51 +254,33 @@ def game_over():
     x = 650
     y = 600
     all_sprites = pygame.sprite.Group()
-
     Sad_smile(all_sprites)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     x = 350
     y = 600
     all_sprites = pygame.sprite.Group()
-
     Sad_smile(all_sprites)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     x = 50
     y = 600
     all_sprites = pygame.sprite.Group()
-
     Sad_smile(all_sprites)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     my_font = pygame.font.SysFont('times new roman', 50)
-
     game_over_surface = my_font.render(
         'Your Total is : ' + str(total), True, applecolor)
-
     game_over_rect = game_over_surface.get_rect()
-
     game_over_rect.midtop = (450, 450)
-
     screen.blit(game_over_surface, game_over_rect)
     pygame.display.flip()
-
     time.sleep(2)
-
     pygame.quit()
-
     quit()
 
-
 q = 0
-
 
 class Smile(pygame.sprite.Sprite):
     image = pygame.image.load('smile.png')
@@ -328,7 +301,6 @@ class Smile(pygame.sprite.Sprite):
             self.rect = self.rect.move(-10, -10)
             self.rect = self.rect.move(10, 10)
         q += 1
-
 
 while running:
     for event in pygame.event.get():
@@ -355,33 +327,24 @@ while running:
     x = 650
     y = 650
     all_sprites = pygame.sprite.Group()
-
     a = Smile(all_sprites)
     sprit.append(a)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     x = 350
     y = 650
     all_sprites = pygame.sprite.Group()
-
     a = Smile(all_sprites)
     sprit.append(a)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     x = 50
     y = 650
     all_sprites = pygame.sprite.Group()
-
     a = Smile(all_sprites)
     sprit.append(a)
-
     all_sprites.draw(screen)
     all_sprites.update()
-
     string_rendered = score_font.render('Рекорды:', 0, pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
     screen.blit(string_rendered, (500, 20))
