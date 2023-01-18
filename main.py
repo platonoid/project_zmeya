@@ -2,6 +2,7 @@ import random
 import pygame
 import sys
 import time
+import image
 import sqlite3
 import pygame_menu
 from copy import deepcopy
@@ -34,7 +35,7 @@ position = []
 
 color = 'black'
 backcolor = 'green'
-applecolor = 'black'
+applecolor = 'red'
 
 MARGiN = 1
 running = True
@@ -52,6 +53,27 @@ id INT PRIMARY KEY,
 points TEXT);
 """)
 con.commit()
+
+
+class Sad_smile(pygame.sprite.Sprite):
+    image = pygame.image.load('final.png')
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Sad_smile.image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        global q
+        if q % 2 == 0:
+            self.rect = self.rect.move(10, 10)
+            self.rect = self.rect.move(-10, -10)
+        else:
+            self.rect = self.rect.move(-10, -10)
+            self.rect = self.rect.move(10, 10)
+        q += 1
 
 
 def play_bg_music(state):
@@ -186,7 +208,7 @@ def draw_body_part(color, row, colums, eto='pofig'):
             pygame.draw.rect(screen, color,
                              [10 + colums * SIZE + MARGiN * (colums + 1),
                               20 + row * SIZE + MARGiN * (row + 1), SIZE, SIZE])
-        elif eto == 'app':
+        elif eto == 'apple':
             pygame.draw.rect(screen, 'blue',
                              [10 + colums * SIZE + MARGiN * (colums + 1),
                               20 + row * SIZE + MARGiN * (row + 1), SIZE, SIZE // 6])
@@ -229,8 +251,41 @@ total = 0
 apple = draw_apple()
 
 def game_over():
+    global sprit
+    global x
+    global y
     cur.execute(f'''INSERT INTO records(points) VALUES({str(total)})''')
     con.commit()
+
+    for i in sprit:
+        i.kill()
+
+    x = 650
+    y = 600
+    all_sprites = pygame.sprite.Group()
+
+    Sad_smile(all_sprites)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
+
+    x = 350
+    y = 600
+    all_sprites = pygame.sprite.Group()
+
+    Sad_smile(all_sprites)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
+
+    x = 50
+    y = 600
+    all_sprites = pygame.sprite.Group()
+
+    Sad_smile(all_sprites)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
 
     my_font = pygame.font.SysFont('times new roman', 50)
 
@@ -249,6 +304,31 @@ def game_over():
     pygame.quit()
 
     quit()
+
+
+q = 0
+
+
+class Smile(pygame.sprite.Sprite):
+    image = pygame.image.load('smile.png')
+
+    def __init__(self, *group):
+        super().__init__(*group)
+        self.image = Smile.image
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+
+    def update(self):
+        global q
+        if q % 2 == 0:
+            self.rect = self.rect.move(10, 10)
+            self.rect = self.rect.move(-10, -10)
+        else:
+            self.rect = self.rect.move(-10, -10)
+            self.rect = self.rect.move(10, 10)
+        q += 1
+
 
 while running:
     for event in pygame.event.get():
@@ -270,6 +350,37 @@ while running:
     screen.blit(text_total, (SIZE, SIZE + 500))
     text_speed = score_font.render(f"Total: {total}", 0, TEXT_COLOR)
     screen.blit(text_speed, (SIZE + 600, SIZE + 500))
+    sprit = []
+
+    x = 650
+    y = 650
+    all_sprites = pygame.sprite.Group()
+
+    a = Smile(all_sprites)
+    sprit.append(a)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
+
+    x = 350
+    y = 650
+    all_sprites = pygame.sprite.Group()
+
+    a = Smile(all_sprites)
+    sprit.append(a)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
+
+    x = 50
+    y = 650
+    all_sprites = pygame.sprite.Group()
+
+    a = Smile(all_sprites)
+    sprit.append(a)
+
+    all_sprites.draw(screen)
+    all_sprites.update()
 
     string_rendered = score_font.render('Рекорды:', 0, pygame.Color('black'))
     intro_rect = string_rendered.get_rect()
@@ -295,7 +406,7 @@ while running:
         d.play()
         game_over()
 
-    draw_body_part(applecolor, apple.y, apple.x, eto='app') # цвет яблока
+    draw_body_part(applecolor, apple.y, apple.x, eto='apple') # цвет яблока
     for body_part in snakes_body:
         draw_body_part(color, body_part.y, body_part.x, eto='snake') # цвет змейки
 
@@ -314,6 +425,8 @@ while running:
 
     if new_head in snakes_body:
         d.play()
+        all_sprites.clear(screen)
+        all_sprites.draw(screen)
         game_over()
 
     snakes_body.append(new_head)
