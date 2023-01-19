@@ -173,6 +173,8 @@ def start_screen():
         pygame.display.flip()
         clock.tick(FPS)
 start_screen()
+
+
 class Body_Of_Snake:
     def __init__(self, x, y):
         self.x = x
@@ -239,6 +241,7 @@ speed = 1
 total = 0
 apple = draw_apple()
 
+
 def game_over():
     global sprit
     global x
@@ -249,19 +252,19 @@ def game_over():
     for i in sprit:
         i.kill()
 
-    x = 650
+    x = 685
     y = 600
     all_sprites = pygame.sprite.Group()
     Sad_smile(all_sprites)
     all_sprites.draw(screen)
     all_sprites.update()
-    x = 350
+    x = 315
     y = 600
     all_sprites = pygame.sprite.Group()
     Sad_smile(all_sprites)
     all_sprites.draw(screen)
     all_sprites.update()
-    x = 50
+    x = -50
     y = 600
     all_sprites = pygame.sprite.Group()
     Sad_smile(all_sprites)
@@ -279,6 +282,7 @@ def game_over():
     quit()
 
 q = 0
+
 
 class Smile(pygame.sprite.Sprite):
     image = pygame.image.load('smile.png')
@@ -371,7 +375,6 @@ while running:
     for body_part in snakes_body:
         draw_body_part(color, body_part.y, body_part.x, eto='snake') # цвет змейки
 
-
     if apple == head:
         total += 10
         speed = total // 20 + 1
@@ -393,4 +396,3 @@ while running:
     snakes_body.pop(0)
     pygame.display.flip()
     timer.tick(5 + speed)
-
