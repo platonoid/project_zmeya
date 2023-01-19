@@ -4,7 +4,6 @@ import sys
 import time
 import image
 import sqlite3
-from copy import deepcopy
 from random import choice, randrange
 
 
@@ -388,7 +387,6 @@ while running:
 
     if new_head in snakes_body:
         d.play()
-        all_sprites.clear(screen)
         all_sprites.draw(screen)
         game_over()
 
