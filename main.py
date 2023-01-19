@@ -2,7 +2,6 @@ import random
 import pygame
 import sys
 import time
-import image
 import sqlite3
 from random import choice, randrange
 
